@@ -1,4 +1,4 @@
-import connection from "../bd.js";
+import connection from "../database/bd.js";
 
 export async function selectByWins(){
     try{

@@ -1,9 +1,10 @@
 import { Router } from "express";
 
-import {gitBattle} from "./../controllers/gitBattle.js";
+import {gitBattle} from "../controllers/gitHubBattleController.js";
+import { validateBattleSchema } from "../middlewares/validateSchema.js";
 
 const fightRouter = Router();
 
-fightRouter.post("/battle", gitBattle);
+fightRouter.post("/battle", validateBattleSchema, gitBattle);
 
 export default fightRouter;

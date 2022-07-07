@@ -1,4 +1,4 @@
-import express, {json} from "express";
+import express,{json} from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import fightRouter from "./routers/fightRouter.js";
@@ -12,4 +12,4 @@ app.use(json());
 app.use(fightRouter);
 app.use(rankingRouter);
 
-app.listen(process.env.PORT || 5000);
+app.listen(+process.env.PORT || 5000);
