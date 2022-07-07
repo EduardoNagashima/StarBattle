@@ -1,4 +1,4 @@
-import * as selectFighterRepository from "./../repositories/selectFighterRepository.js";
+import * as selectFighterRepository from "../repositories/selectRepository.js";
 
 function getRankingService(){
     const ranking = selectFighterRepository.selectByWins();

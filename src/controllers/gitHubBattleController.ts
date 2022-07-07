@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
-import axios, { AxiosResponse, ResponseType } from "axios";
-import connection from "../database/bd.js";
+import axios, { AxiosResponse } from "axios";
+import * as selectRepository from "../repositories/selectRepository.js";
+import * as insertRepository from "../repositories/insertRepository.js";
+import * as updateRepository from "../repositories/updateRepository.js";
 
 export async function gitBattle(req: Request, res: Response){
     let firstUserStars: number = 0;
@@ -18,38 +20,22 @@ export async function gitBattle(req: Request, res: Response){
         });
 
         if (firstUserStars > secondUserStars){
-            try {
-                const firstUserDB = await connection.query(`
-                SELECT * FROM fighters 
-                WHERE username = $1`
-                ,[firstUser]);
-                console.log(firstUserDB.rows);
+            const firstUserDB = await selectRepository.selectByUsername(firstUser);
+            console.log(firstUserDB);
 
-                if (firstUserDB.rows === 0){
-                    await connection.query(`
-                    INSERT INTO fighters (username, wins, losses, draws) 
-                    VALUES ($1, $2, $3, $4)
-                    WHERE username = $5
-                    `
-                    ,[firstUser, 1, 0, 0, firstUser]);
-                } else {
-                    await connection.query(`
-                    INSERT INTO fighters (username, wins, losses, draws) 
-                    VALUES ($1, $2, $3, $4)
-                    WHERE username = $5
-                    `
-                    ,[firstUser, 2, firstUserDB.rows.losses, firstUserDB.rows.draws, firstUser]);
-                }
-                res.sendStatus(200);
-                return({
-                    winner: firstUser,
-                    loser: secondUser,
-                    draw: false
-                })
-            } catch (error) {
-                console.log(error);
-                return res.sendStatus(500)
+            if (firstUserDB.length === 0){
+                insertRepository.newInsert(firstUser, true);
+            } else {
+                const updatedWins: number = firstUserDB[0].wins + 1;
+                updateRepository.updateFights(updatedWins, firstUser);
             }
+
+            return res.status(200).send({
+                winner: firstUser,
+                loser: secondUser,
+                draw: false
+            });
+          
         } else if (firstUserStars < secondUserStars){
             //2° ganhou
             return res.status(200).send({
