@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import getRankingService from "../services/getRankingService.js";
+import { getRankingService } from "../services/getRankingService.js";
 
-export function getRanking(req: Request, res: Response){
-    const ranking = getRankingService();
+export async function getRanking(req: Request, res: Response){
+    const ranking = await getRankingService();
     return res.send(ranking);
 }

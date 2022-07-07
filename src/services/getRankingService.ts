@@ -1,5 +1,10 @@
 import * as selectFighterRepository from "./../repositories/selectFighterRepository.js";
 
-export default function getRankingService(){
-    return selectFighterRepository.selectByWins();
+function getRankingService(){
+    const ranking = selectFighterRepository.selectByWins();
+    return ranking;
+}
+
+export {
+    getRankingService,
 }
