@@ -20,6 +20,19 @@ async function newInsert(username: string, win: boolean) {
     }
 }
 
+async function drawInsert(username :string) {
+    try {
+        await connection.query(`
+            INSERT INTO fighters (username, wins, losses, draws) 
+            VALUES ($1, $2, $3, $4)
+            `
+            ,[username, 0, 0, 1]);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 export {
     newInsert,
+    drawInsert
 }

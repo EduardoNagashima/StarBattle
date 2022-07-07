@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import axios, { AxiosResponse } from "axios";
-import * as selectRepository from "../repositories/selectRepository.js";
-import * as insertRepository from "../repositories/insertRepository.js";
-import * as updateRepository from "../repositories/updateRepository.js";
+import { loseBattle, winBattle, drawBattle } from "../services/battleServices.js";
 
 export async function gitBattle(req: Request, res: Response){
     let firstUserStars: number = 0;
@@ -20,15 +18,9 @@ export async function gitBattle(req: Request, res: Response){
         });
 
         if (firstUserStars > secondUserStars){
-            const firstUserDB = await selectRepository.selectByUsername(firstUser);
-            console.log(firstUserDB);
 
-            if (firstUserDB.length === 0){
-                insertRepository.newInsert(firstUser, true);
-            } else {
-                const updatedWins: number = firstUserDB[0].wins + 1;
-                updateRepository.updateFights(updatedWins, firstUser);
-            }
+            winBattle(firstUser);
+            loseBattle(secondUser);
 
             return res.status(200).send({
                 winner: firstUser,
@@ -37,24 +29,29 @@ export async function gitBattle(req: Request, res: Response){
             });
           
         } else if (firstUserStars < secondUserStars){
-            //2° ganhou
+
+            winBattle(secondUser);
+            loseBattle(firstUser);
+
             return res.status(200).send({
                 winner: secondUser,
                 loser: firstUser,
                 draw: false
-            })
+            });
          
         } else {
+
+            drawBattle(firstUser, secondUser);
+
             return res.status(200).send({
                 winner: null,
                 loser: null,
                 draw: true
-            })
+            });
         }
 
-        return res.sendStatus(200);
     }catch(err){
-        console.log(err)
+        console.log(err);
         return res.sendStatus(500);
     }
 }
